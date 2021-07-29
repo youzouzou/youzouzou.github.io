@@ -1,0 +1,131 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content=""><title>手摸手教你写个chrome插件 | 我爱学习，学习使我快乐</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 5.4.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">手摸手教你写个chrome插件</h1><a id="logo" href="/.">我爱学习，学习使我快乐</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/about/"><i class="fa fa-user"> About</i></a><a href="/atom.xml"><i class="fa fa-rss"> RSS</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">手摸手教你写个chrome插件</h1><div class="post-meta">2021-07-29</div><div class="post-content"><h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ol>
+<li>需求分析</li>
+<li>官网Demo入门</li>
+<li>Manifest配置文件</li>
+<li>实现思路</li>
+<li>核心代码</li>
+<li>实现效果</li>
+</ol>
+<hr>
+<p>不知道大家有没有过类似的经历，查阅资料时经常会打开一堆临时tab标签，不至于到要加入收藏夹的地步，但是直接关了再找又麻烦，而且挤挤挨挨的一堆找起来也很费眼睛……</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/d5e88739d84f0818ed86657e4f18777b.png" alt="密密麻麻的tab标签页"></p>
+<p>有没有什么工具能保存下我打开的tab，并且能方便地查看？</p>
+<p>受到印象笔记剪藏插件的启发，我找到了个插件<strong>OneTab</strong>，可以一键关闭所有标签页并保存到一个页面中：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/9ea68dbb986d8fce57ca10c3dafc0111.png" alt="OneTab"></p>
+<p>出于好奇，我去了解了下：如何写一个chrome插件？</p>
+<p>再次打开一堆tab…….</p>
+<blockquote>
+<p>写一个chrome插件需要的技术基础：<strong>html、js、css</strong>。</p>
+</blockquote>
+<p>？？？就这？这不就是我前端切图仔的三板斧吗？！</p>
+<p>话不多说，直接开撸！</p>
+<h3 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h3><p>首先分析我的需求：</p>
+<ol>
+<li>保存打开的网页地址；</li>
+<li>看完后可以便捷地删除；</li>
+<li>最好能一键全部保存；</li>
+<li>再来个一键删除；</li>
+<li>再来个一键全开；</li>
+</ol>
+<p>……</p>
+<p>打住打住，先完成核心需求再说= =。</p>
+<h3 id="官网Demo入门"><a href="#官网Demo入门" class="headerlink" title="官网Demo入门"></a>官网Demo入门</h3><p>依据官网上的指示，插件应包含以下文件：</p>
+<ul>
+<li>一个manifest文件（配置文件）</li>
+<li>一个或多个HTML文件（除非这个应用是一个皮肤）</li>
+<li>可选的一个或多个JavaScript文件</li>
+<li>可选的任何需要的其他文件，例如图片</li>
+</ul>
+<p>除了manifest不知道是啥，其他都是熟悉的配方。谷歌官方还很贴心地给出了入门demo：<a target="_blank" rel="noopener" href="https://storage.googleapis.com/chrome-gcs-uploader.appspot.com/file/WlD8wC6g8khYWPJUsQceQkhXSlv1/SVxMBoc5P3f6YV3O7Xbu.zip">https://storage.googleapis.com/chrome-gcs-uploader.appspot.com/file/WlD8wC6g8khYWPJUsQceQkhXSlv1/SVxMBoc5P3f6YV3O7Xbu.zip</a></p>
+<p>下载下来后可以看到有这么几个文件：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/0e679f2f584018bd70515d78e9c0afe6.png" alt="getting-started目录"></p>
+<p>打开chrome，右上角扩展操作&gt;更多工具&gt;扩展程序，点击加载已解压的扩展程序，选中上面的文件夹，就可以看到加载进来的demo插件。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/6e97301563b181efed749dd44203d523.png" alt="加载插件"></p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/0639ff70a4dc66d1ddb169dc5062336d.png" alt="已加载进来的demo插件"></p>
+<h3 id="Manifest配置文件"><a href="#Manifest配置文件" class="headerlink" title="Manifest配置文件"></a>Manifest配置文件</h3><p>我们先来看看demo里的manifest.json配置：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;Getting Started Example&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;description&quot;</span>: <span class="string">&quot;Build an Extension!&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;1.0&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;manifest_version&quot;</span>: <span class="number">3</span>,</span><br><span class="line">  <span class="attr">&quot;background&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;service_worker&quot;</span>: <span class="string">&quot;background.js&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;permissions&quot;</span>: [<span class="string">&quot;storage&quot;</span>, <span class="string">&quot;activeTab&quot;</span>, <span class="string">&quot;scripting&quot;</span>],</span><br><span class="line">  <span class="attr">&quot;action&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;default_popup&quot;</span>: <span class="string">&quot;popup.html&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;default_icon&quot;</span>: &#123;</span><br><span class="line">      <span class="attr">&quot;16&quot;</span>: <span class="string">&quot;/images/get_started16.png&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;32&quot;</span>: <span class="string">&quot;/images/get_started32.png&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;48&quot;</span>: <span class="string">&quot;/images/get_started48.png&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;128&quot;</span>: <span class="string">&quot;/images/get_started128.png&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;icons&quot;</span>: &#123;</span><br><span class="line">    <span class="attr">&quot;16&quot;</span>: <span class="string">&quot;/images/get_started16.png&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;32&quot;</span>: <span class="string">&quot;/images/get_started32.png&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;48&quot;</span>: <span class="string">&quot;/images/get_started48.png&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;128&quot;</span>: <span class="string">&quot;/images/get_started128.png&quot;</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">&quot;options_page&quot;</span>: <span class="string">&quot;options.html&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="配置说明"><a href="#配置说明" class="headerlink" title="配置说明"></a>配置说明</h4><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>name</td>
+<td>插件名称</td>
+</tr>
+<tr>
+<td>description</td>
+<td>插件描述</td>
+</tr>
+<tr>
+<td>version</td>
+<td>插件版本号</td>
+</tr>
+<tr>
+<td>manifest_version</td>
+<td>清单文件的版本（目前是3，按照官方的来就可以）</td>
+</tr>
+<tr>
+<td>background</td>
+<td>后台默认程序，版本3使用service_worker替代了之前的scripts，主要作用是管理缓存、预加载资源和启用离线网页。</td>
+</tr>
+<tr>
+<td>permissions</td>
+<td>需要的权限</td>
+</tr>
+<tr>
+<td>action</td>
+<td>toolbar扩展菜单配置</td>
+</tr>
+<tr>
+<td>icons</td>
+<td>插件图标（可以适配不同的尺寸）</td>
+</tr>
+<tr>
+<td>options_page</td>
+<td>扩展程序选项（一般是让用户自定义选择插件的某些参数值）</td>
+</tr>
+</tbody></table>
+<p>其中，</p>
+<ul>
+<li>本次需要的permissions有：<ul>
+<li>tabs：访问tab页；</li>
+<li>storage：存取缓存；</li>
+<li>unlimitedStorage：无限缓存。<br>更多权限配置说明见官网：<a target="_blank" rel="noopener" href="https://developer.chrome.com/docs/extensions/mv2/declare_permissions/#manifest">https://developer.chrome.com/docs/extensions/mv2/declare_permissions/#manifest</a></li>
+</ul>
+</li>
+<li><code>action</code>这里我用的是清单版本2中的<code>browser_action</code>，版本3中的action无法弹出popup选项卡，估计是我用的姿势不太对……（有知道的童鞋可以留言告诉我怎么用~）</li>
+</ul>
+<p>修改后的配置文件：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">&quot;manifest_version&quot;</span>: <span class="number">3</span>,</span><br><span class="line">    <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;阅读TODO清单&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;version&quot;</span>: <span class="string">&quot;1.0.0&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;description&quot;</span>: <span class="string">&quot;一键保存tab，轻松管理临时标签页&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;icons&quot;</span>:</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">&quot;16&quot;</span>: <span class="string">&quot;images/icon.png&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;48&quot;</span>: <span class="string">&quot;images/icon.png&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;128&quot;</span>: <span class="string">&quot;images/icon.png&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">&quot;browser_action&quot;</span>:</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="attr">&quot;default_icon&quot;</span>: <span class="string">&quot;images/icon.png&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;default_title&quot;</span>: <span class="string">&quot;阅读清单-by 游走走&quot;</span>,</span><br><span class="line">        <span class="attr">&quot;default_popup&quot;</span>: <span class="string">&quot;popup.html&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">&quot;permissions&quot;</span>:</span><br><span class="line">    [</span><br><span class="line">        <span class="string">&quot;tabs&quot;</span>,</span><br><span class="line">        <span class="string">&quot;storage&quot;</span>,</span><br><span class="line">        <span class="string">&quot;unlimitedStorage&quot;</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">&quot;options_page&quot;</span>: <span class="string">&quot;options.html&quot;</span>,</span><br><span class="line">    <span class="attr">&quot;homepage_url&quot;</span>: <span class="string">&quot;https://github.com/youzouzou/my-chrome-plugin-read-todo&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>homepage_url：扩展程序网站，这里指向了我的github开源地址:)</li>
+</ul>
+<h3 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h3><p>TODO清单这种小玩意儿就不多说了，简单来讲就是维护一个数组，并通过本地缓存get/set来实现增删改查。</p>
+<h3 id="核心代码"><a href="#核心代码" class="headerlink" title="核心代码"></a>核心代码</h3><p><img src="https://img-blog.csdnimg.cn/img_convert/90c44a9b024091f3e0a7b8eb99a415f6.png" alt="popup插件选项卡"></p>
+<p>讲完了配置，接下来就是我们熟悉的html/js/css三板斧了。</p>
+<p>在<code>popup.html</code>里我定义了三个按钮：<strong>加入阅读清单</strong>、<strong>查看清单</strong>、<strong>加入所有打开tab</strong>。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;addBtn&quot;</span>&gt;</span>加入阅读清单<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;viewBtn&quot;</span>&gt;</span>查看清单<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;addAll&quot;</span>&gt;</span>加入所有打开tab<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>监听按钮点击事件：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> addBtn = <span class="built_in">document</span>.getElementById(<span class="string">&quot;addBtn&quot;</span>)</span><br><span class="line">addBtn.addEventListener(<span class="string">&quot;click&quot;</span>, <span class="keyword">async</span> () =&gt; &#123; &#125;);</span><br></pre></td></tr></table></figure>
+<h4 id="加入阅读清单"><a href="#加入阅读清单" class="headerlink" title="加入阅读清单"></a>加入阅读清单</h4><p>加入阅读清单是将当前tab的url和title保存到缓存数组中，这里就涉及到3个chrome的API。</p>
+<ol>
+<li>获取当前tab的url和title<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">chrome.tabs.getSelected(<span class="literal">null</span>, <span class="function"><span class="keyword">function</span> (<span class="params">tab</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">console</span>.log(tab.url, tab.title)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></li>
+<li>获取当前缓存的tab数组<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chrome.storage.sync.get(<span class="string">&quot;tabs&quot;</span>, <span class="function">(<span class="params">&#123; tabs &#125;</span>) =&gt;</span> &#123; &#125;);</span><br></pre></td></tr></table></figure></li>
+<li>更新缓存中的tab数组<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chrome.storage.sync.set(&#123; <span class="string">&quot;tabs&quot;</span>: newTabList &#125;);</span><br></pre></td></tr></table></figure>
+<h4 id="查看清单"><a href="#查看清单" class="headerlink" title="查看清单"></a>查看清单</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">viewBtn.addEventListener(<span class="string">&quot;click&quot;</span>, <span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">  <span class="built_in">window</span>.open(chrome.extension.getURL(<span class="string">&#x27;list.html&#x27;</span>));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+这里会打开一个新的tab页，指向的是<code>list.html</code>文件。我在这个页面展示了缓存的tab数组，并提供了单个url打开/删除、一键全部打开/删除的功能。<h4 id="加入所有打开tab"><a href="#加入所有打开tab" class="headerlink" title="加入所有打开tab"></a>加入所有打开tab</h4>这里和加入单个tab差不多，只不过需要多调一个API来获取所有窗口的所有tab：<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">chrome.windows.getAll(&#123; <span class="attr">populate</span>: <span class="literal">true</span> &#125;, <span class="function"><span class="keyword">function</span> (<span class="params">windows</span>) </span>&#123;</span><br><span class="line">      windows.forEach(<span class="function"><span class="keyword">function</span> (<span class="params"><span class="built_in">window</span></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">window</span>.tabs.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">tab</span>) </span>&#123;</span><br><span class="line">          <span class="comment">// 遍历到所有tab</span></span><br><span class="line">        &#125;);</span><br><span class="line">      &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>核心代码基本就是这几个API，具体实现可以参照demo：<a target="_blank" rel="noopener" href="https://github.com/youzouzou/my-chrome-plugin-read-todo">https://github.com/youzouzou/my-chrome-plugin-read-todo</a></p>
+<p>感兴趣的同学可以下载demo，加载已解压的扩展程序，就可以看到具体的实现效果。打包成.crx文件也很简单，打开扩展程序，点击<strong>打包扩展程序</strong>：</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/c64bf606dc21168740626169e4f04035.png" alt="打包扩展程序"></p>
+<p>还可以注册开发者账号，将开发好的插件上传到chrome网上应用商店供其他用户购买和下载(发家致富的路子又多了一个有木有~)。</p>
+<h3 id="实现效果"><a href="#实现效果" class="headerlink" title="实现效果"></a>实现效果</h3><p><img src="https://img-blog.csdnimg.cn/img_convert/b2bcb5194292809e4750e689e3b77ec8.png" alt="chrome插件展示"></p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/da4198c107a214fa7a26c7b91fc56f29.png" alt="左键点击toolbar中的插件"></p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/497e3194b9c4df7a19d02af4c5413490.png" alt="右键点击toolbar中的插件"></p>
+<p>注：这里的<code>阅读TODO清单</code>指向的就是<code>homepage_url</code>；<code>选项</code>指向的就是<code>options_page</code>。</p>
+<p><img src="https://img-blog.csdnimg.cn/img_convert/6d3689b87ced8034fbc9d1eb9f414083.png" alt="查看清单"></p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>功能比起OneTab是要简陋得多，不过通过这次尝试，打开了我新世界的大门，以后解决问题的思路又多了一种√。</p>
+</div><div class="tags"></div><div class="post-nav"><a class="next" href="/2021/07/28/hello-world/">在线博客转PDF电子书 | JS爬虫初探</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://example.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> Categories</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Node/">Node</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Node/JS/">JS</a></li></ul></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> Tags</i></div><div class="tagcloud"><a href="/tags/NodeJS/" style="font-size: 15px;">NodeJS</a> <a href="/tags/%E7%88%AC%E8%99%AB/" style="font-size: 15px;">爬虫</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2021/07/29/%E6%89%8B%E6%91%B8%E6%89%8B%E6%95%99%E4%BD%A0%E5%86%99%E4%B8%AAchrome%E6%8F%92%E4%BB%B6/">手摸手教你写个chrome插件</a></li><li class="post-list-item"><a class="post-list-link" href="/2021/07/28/hello-world/">在线博客转PDF电子书 | JS爬虫初探</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> Links</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2021 <a href="/." rel="nofollow">我爱学习，学习使我快乐.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/copycode.js" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>
