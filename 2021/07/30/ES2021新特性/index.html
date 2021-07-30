@@ -47,9 +47,10 @@
 <p><img src="https://img-blog.csdnimg.cn/img_convert/f36c55537d1ab5ec81a8221fa552324f.png" alt="当元素被移除后，element指向的对象变为undefined，控制台输出日志，计时器停止"></p>
 <p>浏览器兼容性：<br><img src="https://img-blog.csdnimg.cn/img_convert/d5c7164c93ed2a18110fb9243348c05e.png"></p>
 <h3 id="4、proposal-logical-assignment"><a href="#4、proposal-logical-assignment" class="headerlink" title="4、proposal-logical-assignment"></a>4、proposal-logical-assignment</h3><p><a target="_blank" rel="noopener" href="https://github.com/tc39/proposal-logical-assignment">https://github.com/tc39/proposal-logical-assignment</a></p>
-<p>继2020年提出的<code>??</code>空值合并运算符之后，今年又多了两个：<code>||=</code> 和 <code>&amp;&amp;=</code> 逻辑操作符。</p>
+<p>继2020年提出的<code>??</code>空值合并运算符之后，今年又多了三个：<code>||=</code> 、 <code>&amp;&amp;=</code> 和 <code>??=</code> 逻辑操作符。</p>
 <p><code>a ||= b</code>等价于<code>a || (a = b)</code></p>
 <p><code>a &amp;&amp;= b</code>等价于<code>a &amp;&amp; (a = b)</code></p>
+<p><code>a ??= b</code>等价于<code>a ?? (a = b)</code></p>
 <p>这个提案的灵感来自于Ruby语言。</p>
 <p>举个例子：</p>
 <figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> a = &#123; <span class="attr">duration</span>: <span class="number">50</span>, <span class="attr">title</span>: <span class="string">&#x27;&#x27;</span> &#125;;</span><br><span class="line"></span><br><span class="line">a.duration ||= <span class="number">10</span>;</span><br><span class="line"><span class="built_in">console</span>.log(a.duration); <span class="comment">// 50</span></span><br><span class="line"></span><br><span class="line">a.title ||= <span class="string">&#x27;title is empty.&#x27;</span>;</span><br><span class="line"><span class="built_in">console</span>.log(a.title); <span class="comment">// &quot;title is empty&quot;</span></span><br></pre></td></tr></table></figure>
